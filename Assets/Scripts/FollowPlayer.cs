@@ -10,13 +10,13 @@ public class FollowPlayer : MonoBehaviour
     private Vector3 thirdPersonOffset = new Vector3(0, 5, -7);
     private Vector3 firstPersonOffset = new Vector3(0, 1.5f, 0.8f);
     private Vector3 currentOffset;
-    private bool isFirstPerson = false;
+    private static bool isFirstPerson = false;
     private Camera cam;
 
     // Start is called before the first frame update
     void Start()
     {
-        currentOffset = thirdPersonOffset;
+        currentOffset = isFirstPerson ? firstPersonOffset : thirdPersonOffset;
         cam = GetComponent<Camera>();
         
         // Set up split screen viewports
@@ -38,12 +38,15 @@ public class FollowPlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Toggle camera view with V key for Player 1, B key for Player 2
-        KeyCode toggleKey = playerNumber == 1 ? KeyCode.V : KeyCode.B;
-        
-        if (Input.GetKeyDown(toggleKey))
+        // Toggle camera view with V key for both players
+        if (Input.GetKeyDown(KeyCode.V))
         {
             isFirstPerson = !isFirstPerson;
+            currentOffset = isFirstPerson ? firstPersonOffset : thirdPersonOffset;
+        }
+        else
+        {
+            // Update offset if it was changed by another camera instance
             currentOffset = isFirstPerson ? firstPersonOffset : thirdPersonOffset;
         }
 
